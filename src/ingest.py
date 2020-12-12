@@ -1,3 +1,5 @@
+import datetime
+
 '''
 Types of clippings:
     - Note
@@ -64,3 +66,44 @@ def process_clipping(clipping):
     metadata = clipping.pop(0)
     assert clipping.pop(0) == '', 'Unexpected Clipping Format'
     return title, metadata, '\n'.join(clipping)
+
+def process_metadata(metadata):
+    # get location
+    # get type
+    # get date
+    pass
+
+def get_clipping_type(metadata):
+    '''Determine if type is highlight or note'''
+
+    type_loc = metadata.split('|')[0]
+    _, _, type, _, _ = type_loc.split()
+    return type.lower()
+
+def get_clipping_location(metadata):
+    '''Might need to differentiate between location and location range'''
+
+    type_loc = metadata.split('|')[0]
+    _, _, _, _, loc = type_loc.split()
+    return loc
+
+def get_date(metadata):
+    '''Parse date from metadata
+    TODO: convert this to datetime
+    '''
+
+    temp = metadata.split('|')[1]
+    date = ' '.join(temp.split()[2:])
+    return date
+
+def convert_parsed_date_to_datetime(date):
+    weekday, month_name, day, year, time, semi = date.replace(',', '').split()
+    month = month_name_to_number(month_name)
+    hr, min, sec = time.split(':')
+    dt = [year, month, day, hr, min, sec]
+    dt = [int(x) for x in dt]
+    return datetime.datetime(*dt)
+
+def month_name_to_number(name):
+    # https://www.kite.com/python/answers/how-to-convert-between-month-name-and-month-number-in-python
+    return datetime.datetime.strptime(name, "%B").month
