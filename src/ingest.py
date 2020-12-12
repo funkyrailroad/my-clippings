@@ -97,9 +97,11 @@ def get_date(metadata):
     return date
 
 def convert_parsed_date_to_datetime(date):
-    weekday, month_name, day, year, time, semi = date.replace(',', '').split()
+    _, month_name, day, year, time, semi = date.replace(',', '').split()
     month = month_name_to_number(month_name)
     hr, min, sec = time.split(':')
+    if semi == 'PM':
+        hr = int(hr) + 12
     dt = [year, month, day, hr, min, sec]
     dt = [int(x) for x in dt]
     return datetime.datetime(*dt)

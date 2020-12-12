@@ -39,9 +39,9 @@ comparing the content of the newly-fetched featureA branch with her local copy o
         assert date == 'Saturday, April 18, 2020 11:21:19 AM'
 
     def test_convert_parsed_date_to_datetime(self):
-        date = 'Saturday, April 18, 2020 11:21:19 AM'
+        date = 'Saturday, April 18, 2020 11:21:19 PM'
         dt = convert_parsed_date_to_datetime(date)
-        assert dt == datetime.datetime(2020, 4, 18, 11, 21, 19)
+        assert dt == datetime.datetime(2020, 4, 18, 23, 21, 19)
 
     def test_month_name_to_number(self):
         name = 'April'
