@@ -47,3 +47,44 @@ comparing the content of the newly-fetched featureA branch with her local copy o
         name = 'April'
         number = month_name_to_number(name)
         assert number == 4
+
+    def test_split_clippings(self):
+
+        clippings = '''The Compound Effect (Darren Hardy)
+- Your Highlight Location 626-626 | Added on Friday, December 11, 2020 1:42:54 PM
+
+Become very conscious of every choice you make today so you can begin to make smarter choices moving forward.
+==========
+The Compound Effect (Darren Hardy)
+- Your Highlight Location 636-637 | Added on Friday, December 11, 2020 1:45:14 PM
+
+The biggest difference between successful people and unsuccessful people is that successful people are willing to do what unsuccessful people are not.
+==========
+The Compound Effect (Darren Hardy)
+- Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
+
+Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.
+==========
+'''
+
+        clipping_1 = '''The Compound Effect (Darren Hardy)
+- Your Highlight Location 626-626 | Added on Friday, December 11, 2020 1:42:54 PM
+
+Become very conscious of every choice you make today so you can begin to make smarter choices moving forward.'''
+
+
+        clipping_2 = '''The Compound Effect (Darren Hardy)
+- Your Highlight Location 636-637 | Added on Friday, December 11, 2020 1:45:14 PM
+
+The biggest difference between successful people and unsuccessful people is that successful people are willing to do what unsuccessful people are not.'''
+
+        clipping_3 = '''The Compound Effect (Darren Hardy)
+- Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
+
+Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'''
+
+        answer = [clipping_1, clipping_2, clipping_3]
+
+        clipping_list = split_clippings(clippings)
+
+        assert clipping_list == answer, clipping_list

@@ -109,3 +109,13 @@ def convert_parsed_date_to_datetime(date):
 def month_name_to_number(name):
     # https://www.kite.com/python/answers/how-to-convert-between-month-name-and-month-number-in-python
     return datetime.datetime.strptime(name, "%B").month
+
+def split_clippings(clippings, sep = '==========\n'):
+    '''Chunk full clippings text into a list of individual files
+    TODO: might need to consider that text may not fit in memory at once
+    (although that would be a ridiculously huge clippings file)'''
+
+    clippings_list = clippings.split(sep)
+    clippings_list = [c[:-1] for c in clippings_list]
+    # final item in split will be empty
+    return clippings_list[:-1]
