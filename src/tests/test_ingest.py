@@ -93,29 +93,53 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
 
 class TestClipping(unittest.TestCase):
     def setUp(self):
-        self.raw_clipping = '''The Compound Effect (Darren Hardy)
+        self.raw_highlight = '''The Compound Effect (Darren Hardy)
 - Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
 
 Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'''
-
-    def test_init(self):
-        '''Test with no note, only highlight'''
-
-        raw_clipping = self.raw_clipping
-        title, metadata, content = process_clipping(raw_clipping)
+        title, metadata, content = process_clipping(self.raw_highlight)
         date = get_date(metadata)
         dt = convert_parsed_date_to_datetime(date)
         location = get_clipping_location(metadata)
         kind = get_clipping_type(metadata)
+        self.highlight = Clipping(title, content, dt, kind, location)
 
-        clipping = Clipping(title, content, dt, kind, location)
 
-        assert clipping.title == 'The Compound Effect (Darren Hardy)'
-        assert clipping.content == 'Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'
-        assert clipping.dt == datetime.datetime(2020, 12, 11, 13, 49, 33,
+        self.raw_note = '''The Compound Effect (Darren Hardy)
+- Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
+
+amazingly thoughtful and mutually beneficial gift idea for a loved one'''
+        title, metadata, content = process_clipping(self.raw_note)
+        date = get_date(metadata)
+        dt = convert_parsed_date_to_datetime(date)
+        location = get_clipping_location(metadata)
+        kind = get_clipping_type(metadata)
+        self.note = Clipping(title, content, dt, kind, location)
+
+    def test_init(self):
+        '''Test with no note, only highlight'''
+
+        assert self.highlight.title == 'The Compound Effect (Darren Hardy)'
+        assert self.highlight.content == 'Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'
+        assert self.highlight.dt == datetime.datetime(2020, 12, 11, 13, 49, 33,
                 tzinfo=datetime.timezone.utc)
-        assert clipping.kind == 'highlight'
-        assert clipping.location == '666-668'
+        assert self.highlight.kind == 'highlight'
+        assert self.highlight.location == '666-668'
+
+    def test_get_start_loc(self):
+        start_loc = self.highlight.get_start_loc()
+        assert start_loc == 666, start_loc
+
+        start_loc = self.note.get_start_loc()
+        assert start_loc == None, start_loc
+
+    def test_get_end_loc(self):
+        end_loc = self.highlight.get_end_loc()
+        assert end_loc == 668, end_loc
+
+        end_loc = self.note.get_end_loc()
+        assert end_loc == 548, end_loc
+
 
 class TestPostgres(unittest.TestCase):
     def setUp(self):

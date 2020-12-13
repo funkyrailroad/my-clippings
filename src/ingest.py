@@ -70,6 +70,20 @@ class Clipping(object):
         self.dt = dt
         self.kind = kind
         self.location = location
+        self.start_loc = self.get_start_loc()
+        self.end_loc = self.get_end_loc()
+
+    def get_start_loc(self):
+        if self.kind == 'highlight':
+            return int(self.location.split('-')[0])
+        if self.kind == 'note':
+            return None
+
+    def get_end_loc(self):
+        if self.kind == 'highlight':
+            return int(self.location.split('-')[1])
+        if self.kind == 'note':
+            return int(self.location)
 
 
 def process_clippings():
