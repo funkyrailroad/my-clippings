@@ -42,8 +42,13 @@ comparing the content of the newly-fetched featureA branch with her local copy o
     def test_convert_parsed_date_to_datetime(self):
         date = 'Saturday, April 18, 2020 11:21:19 PM'
         dt = convert_parsed_date_to_datetime(date)
-        assert dt == datetime.datetime(2020, 4, 18, 23, 21, 19,
-                tzinfo=datetime.timezone.utc)
+        assert dt == datetime.datetime(2020,
+                                       4,
+                                       18,
+                                       23,
+                                       21,
+                                       19,
+                                       tzinfo=datetime.timezone.utc)
 
     def test_month_name_to_number(self):
         name = 'April'
@@ -104,7 +109,6 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
         kind = get_clipping_type(metadata)
         self.highlight = Clipping(title, content, dt, kind, location)
 
-
         self.raw_note = '''The Compound Effect (Darren Hardy)
 - Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
 
@@ -121,8 +125,8 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one'''
 
         assert self.highlight.title == 'The Compound Effect (Darren Hardy)'
         assert self.highlight.content == 'Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'
-        assert self.highlight.dt == datetime.datetime(2020, 12, 11, 13, 49, 33,
-                tzinfo=datetime.timezone.utc)
+        assert self.highlight.dt == datetime.datetime(
+            2020, 12, 11, 13, 49, 33, tzinfo=datetime.timezone.utc)
         assert self.highlight.kind == 'highlight'
         assert self.highlight.location == '666-668'
 
@@ -144,7 +148,7 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one'''
 class TestPostgres(unittest.TestCase):
     def setUp(self):
         # grab these from env vars
-        self.db='test_myclippings'
+        self.db = 'test_myclippings'
         self.usr = "postgres"
         self.pw = "mypassword"
         self.host = '127.0.0.1'
@@ -163,7 +167,6 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
         location = get_clipping_location(metadata)
         kind = get_clipping_type(metadata)
         self.highlight = Clipping(title, content, dt, kind, location)
-
 
         self.raw_note = '''The Compound Effect (Darren Hardy)
 - Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
