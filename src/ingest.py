@@ -107,9 +107,7 @@ def get_clipping_location(metadata):
     return loc
 
 def get_date(metadata):
-    '''Parse date from metadata
-    TODO: convert this to datetime
-    '''
+    '''Parse date from metadata'''
 
     temp = metadata.split('|')[1]
     date = ' '.join(temp.split()[2:])
@@ -126,7 +124,10 @@ def convert_parsed_date_to_datetime(date):
     return datetime.datetime(*dt)
 
 def month_name_to_number(name):
-    # https://www.kite.com/python/answers/how-to-convert-between-month-name-and-month-number-in-python
+    '''Convert month name to month number
+    https://www.kite.com/python/answers/how-to-convert-between-month-name-and-month-number-in-python
+    '''
+
     return datetime.datetime.strptime(name, "%B").month
 
 def split_clippings(clippings, sep = '==========\n'):
@@ -138,3 +139,6 @@ def split_clippings(clippings, sep = '==========\n'):
     clippings_list = [c[:-1] for c in clippings_list]
     # final item in split will be empty
     return clippings_list[:-1]
+
+if __name__ == "__main__":
+    pass
