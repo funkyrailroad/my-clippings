@@ -159,7 +159,6 @@ class TestPostgres(unittest.TestCase):
 
         create_highlight_table(self.connection)
         create_note_table(self.connection)
-        self.connection.commit()
 
     def get_test_db_connection(self):
         connection = psycopg2.connect(database=self.db,
