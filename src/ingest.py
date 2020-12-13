@@ -127,7 +127,7 @@ def convert_parsed_date_to_datetime(date):
         hr = int(hr) + 12
     dt = [year, month, day, hr, min, sec]
     dt = [int(x) for x in dt]
-    return datetime.datetime(*dt)
+    return datetime.datetime(*dt).replace(tzinfo=datetime.timezone.utc)
 
 
 def month_name_to_number(name):
@@ -163,15 +163,15 @@ def create_highlight_table(cursor):
     '''Create postgres table for highlights.
     Unique entries have a unique set of title, location and time
     '''
+
     query = \
     '''CREATE TABLE IF NOT EXISTS highlights (
     id SERIAL,
     title VARCHAR ( 500 ),
-    start_loc INTEGER,
-    end_loc INTEGER,
-    datetime TIMESTAMP,
+    location VARCHAR( 20 ),
+    datetime TIMESTAMPTZ,
     content TEXT,
-    PRIMARY KEY (title, start_loc, end_loc, datetime)
+    PRIMARY KEY (title, location, datetime)
     );'''
     cursor.execute(query)
 
@@ -179,16 +179,33 @@ def create_note_table(cursor):
     '''Create postgres table for notes.
     Unique entries have a unique set of title, location and time
     '''
+
     query = \
     '''CREATE TABLE IF NOT EXISTS notes (
     id SERIAL,
     title VARCHAR ( 500 ),
-    end_loc INTEGER,
-    datetime TIMESTAMP,
+    location VARCHAR( 20 ),
+    datetime TIMESTAMPTZ,
     content TEXT,
-    PRIMARY KEY (title, end_loc, datetime)
+    PRIMARY KEY (title, location, datetime)
     );'''
     cursor.execute(query)
+
+def add_highlight_to_db(clipping, cursor):
+    '''Add highlight to database'''
+
+    assert clipping.kind == 'highlight', f'Clipping is {clipping.kind}'
+
+    title = clipping.title
+    location = clipping.location
+    dt = clipping.dt
+    content = clipping.content
+    query = f'''INSERT INTO highlights
+    (title, location, datetime, content)
+    VALUES ( '{title}', '{location}', '{dt}', '{content}' );
+    '''
+    cursor.execute(query)
+
 
 
 if __name__ == "__main__":

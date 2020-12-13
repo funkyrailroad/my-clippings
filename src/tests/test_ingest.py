@@ -42,7 +42,8 @@ comparing the content of the newly-fetched featureA branch with her local copy o
     def test_convert_parsed_date_to_datetime(self):
         date = 'Saturday, April 18, 2020 11:21:19 PM'
         dt = convert_parsed_date_to_datetime(date)
-        assert dt == datetime.datetime(2020, 4, 18, 23, 21, 19)
+        assert dt == datetime.datetime(2020, 4, 18, 23, 21, 19,
+                tzinfo=datetime.timezone.utc)
 
     def test_month_name_to_number(self):
         name = 'April'
@@ -111,7 +112,8 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
 
         assert clipping.title == 'The Compound Effect (Darren Hardy)'
         assert clipping.content == 'Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'
-        assert clipping.dt == datetime.datetime(2020, 12, 11, 13, 49, 33)
+        assert clipping.dt == datetime.datetime(2020, 12, 11, 13, 49, 33,
+                tzinfo=datetime.timezone.utc)
         assert clipping.kind == 'highlight'
         assert clipping.location == '666-668'
 
@@ -120,12 +122,24 @@ class TestPostgres(unittest.TestCase):
         # grab these from env vars
         self.connection = get_db_connection()
         self.cursor = self.connection.cursor()
+        self.raw_clipping = '''The Compound Effect (Darren Hardy)
+- Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
 
-    def test_create_highlight_table(self):
+Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'''
+        title, metadata, content = process_clipping(self.raw_clipping)
+        date = get_date(metadata)
+        dt = convert_parsed_date_to_datetime(date)
+        location = get_clipping_location(metadata)
+        kind = get_clipping_type(metadata)
+        self.clipping = Clipping(title, content, dt, kind, location)
+
         create_highlight_table(self.cursor)
-
-    def test_create_note_table(self):
         create_note_table(self.cursor)
+        self.connection.commit()
+
+    def test_add_highlight_to_db(self):
+        add_highlight_to_db(self.clipping, self.cursor)
+
 
     def tearDown(self):
         self.connection.commit()
