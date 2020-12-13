@@ -161,6 +161,8 @@ class TestPostgres(unittest.TestCase):
         create_note_table(self.connection)
 
     def get_test_db_connection(self):
+        '''Use this connection for everything except creating databases'''
+
         connection = psycopg2.connect(database=self.db,
                                       user=self.usr,
                                       password=self.pw,
@@ -169,6 +171,9 @@ class TestPostgres(unittest.TestCase):
         return connection
 
     def create_test_db(self):
+        '''Create the test database
+        https://pythontic.com/database/postgresql/create%20database'''
+
         connection = psycopg2.connect(user=self.usr,
                                       password=self.pw,
                                       host=self.host,
@@ -181,6 +186,8 @@ class TestPostgres(unittest.TestCase):
         connection.commit()
 
     def destroy_test_db(self):
+        '''Destroy the test database'''
+
         connection = psycopg2.connect(user=self.usr,
                                       password=self.pw,
                                       host=self.host,
@@ -193,6 +200,7 @@ class TestPostgres(unittest.TestCase):
         connection.commit()
 
     def test_highlights(self):
+        '''Test for adding and deleting highlights from the database'''
         raw_highlight = '''The Compound Effect (Darren Hardy)
 - Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
 
@@ -208,6 +216,7 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
         delete_highlight_from_db(highlight, self.connection)
 
     def test_notes(self):
+        '''Test for adding and deleting notes from the database'''
         raw_note = '''The Compound Effect (Darren Hardy)
 - Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
 
@@ -221,7 +230,6 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one'''
 
         add_note_to_db(note, self.connection)
         delete_note_from_db(note, self.connection)
-
 
     def tearDown(self):
         self.connection.close()
