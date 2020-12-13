@@ -77,9 +77,7 @@ def process_clippings():
 
 
 def process_clipping(clipping):
-    '''Split a clipping into its title, metadata and content
-        TODO: Determine if clipping is a note or highlight
-    '''
+    '''Split a clipping into its title, metadata and content '''
 
     clipping = clipping.split('\n')
     title = clipping.pop(0)
@@ -206,6 +204,20 @@ def add_highlight_to_db(clipping, cursor):
     '''
     cursor.execute(query)
 
+def add_note_to_db(clipping, cursor):
+    '''Add note to database'''
+
+    assert clipping.kind == 'note', f'Clipping is {clipping.kind}'
+
+    title = clipping.title
+    location = clipping.location
+    dt = clipping.dt
+    content = clipping.content
+    query = f'''INSERT INTO notes
+    (title, location, datetime, content)
+    VALUES ( '{title}', '{location}', '{dt}', '{content}' );
+    '''
+    cursor.execute(query)
 
 
 if __name__ == "__main__":

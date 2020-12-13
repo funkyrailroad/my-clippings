@@ -122,23 +122,36 @@ class TestPostgres(unittest.TestCase):
         # grab these from env vars
         self.connection = get_db_connection()
         self.cursor = self.connection.cursor()
-        self.raw_clipping = '''The Compound Effect (Darren Hardy)
+        self.raw_highlight = '''The Compound Effect (Darren Hardy)
 - Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
 
 Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'''
-        title, metadata, content = process_clipping(self.raw_clipping)
+        title, metadata, content = process_clipping(self.raw_highlight)
         date = get_date(metadata)
         dt = convert_parsed_date_to_datetime(date)
         location = get_clipping_location(metadata)
         kind = get_clipping_type(metadata)
-        self.clipping = Clipping(title, content, dt, kind, location)
+        self.highlight = Clipping(title, content, dt, kind, location)
+
+
+        self.raw_note = '''The Compound Effect (Darren Hardy)
+- Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
+
+amazingly thoughtful and mutually beneficial gift idea for a loved one'''
+        title, metadata, content = process_clipping(self.raw_note)
+        date = get_date(metadata)
+        dt = convert_parsed_date_to_datetime(date)
+        location = get_clipping_location(metadata)
+        kind = get_clipping_type(metadata)
+        self.note = Clipping(title, content, dt, kind, location)
 
         create_highlight_table(self.cursor)
         create_note_table(self.cursor)
         self.connection.commit()
 
     def test_add_highlight_to_db(self):
-        add_highlight_to_db(self.clipping, self.cursor)
+        add_highlight_to_db(self.highlight, self.cursor)
+        add_note_to_db(self.note, self.cursor)
 
 
     def tearDown(self):
