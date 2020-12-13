@@ -171,11 +171,12 @@ def get_db_connection(
             host=host, port=port)
     return connection
 
-def create_highlight_table(cursor):
+def create_highlight_table(connection):
     '''Create postgres table for highlights.
     Unique entries have a unique set of title, location and time
     '''
 
+    cursor = connection.cursor()
     query = \
     '''CREATE TABLE IF NOT EXISTS highlights (
     id SERIAL,
@@ -186,12 +187,14 @@ def create_highlight_table(cursor):
     PRIMARY KEY (title, location, datetime)
     );'''
     cursor.execute(query)
+    connection.commit()
 
-def create_note_table(cursor):
+def create_note_table(connection):
     '''Create postgres table for notes.
     Unique entries have a unique set of title, location and time
     '''
 
+    cursor = connection.cursor()
     query = \
     '''CREATE TABLE IF NOT EXISTS notes (
     id SERIAL,
@@ -202,38 +205,43 @@ def create_note_table(cursor):
     PRIMARY KEY (title, location, datetime)
     );'''
     cursor.execute(query)
+    connection.commit()
 
-def add_highlight_to_db(clipping, cursor):
+def add_highlight_to_db(clipping, connection):
     '''Add highlight to database'''
 
     assert clipping.kind == 'highlight', f'Clipping is {clipping.kind}'
-
     title = clipping.title
     location = clipping.location
     dt = clipping.dt
     content = clipping.content
+
+    cursor = connection.cursor()
     query = f'''INSERT INTO highlights
     (title, location, datetime, content)
     VALUES ( '{title}', '{location}', '{dt}', '{content}' );
     '''
     cursor.execute(query)
+    connection.commit()
 
-def add_note_to_db(clipping, cursor):
+def add_note_to_db(clipping, connection):
     '''Add note to database'''
 
     assert clipping.kind == 'note', f'Clipping is {clipping.kind}'
-
     title = clipping.title
     location = clipping.location
     dt = clipping.dt
     content = clipping.content
+
+    cursor = connection.cursor()
     query = f'''INSERT INTO notes
     (title, location, datetime, content)
     VALUES ( '{title}', '{location}', '{dt}', '{content}' );
     '''
     cursor.execute(query)
+    connection.commit()
 
-def delete_highlight_from_db(clipping, cursor):
+def delete_highlight_from_db(clipping, connection):
     '''Delete highlight from database'''
 
     assert clipping.kind == 'highlight', f'Clipping is {clipping.kind}'
@@ -241,6 +249,8 @@ def delete_highlight_from_db(clipping, cursor):
     location = clipping.location
     dt = clipping.dt
     content = clipping.content
+
+    cursor = connection.cursor()
     query = f'''DELETE FROM highlights
     WHERE
     location = '{location}' AND
@@ -248,8 +258,9 @@ def delete_highlight_from_db(clipping, cursor):
     content = '{content}';
     '''
     cursor.execute(query)
+    connection.commit()
 
-def delete_note_from_db(clipping, cursor):
+def delete_note_from_db(clipping, connection):
     '''Delete note from database'''
 
     assert clipping.kind == 'note', f'Clipping is {clipping.kind}'
@@ -257,6 +268,8 @@ def delete_note_from_db(clipping, cursor):
     location = clipping.location
     dt = clipping.dt
     content = clipping.content
+
+    cursor = connection.cursor()
     query = f'''DELETE FROM notes
     WHERE
     location = '{location}' AND
@@ -264,6 +277,7 @@ def delete_note_from_db(clipping, cursor):
     content = '{content}';
     '''
     cursor.execute(query)
+    connection.commit()
 
 if __name__ == "__main__":
     pass

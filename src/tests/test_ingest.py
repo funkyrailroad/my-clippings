@@ -143,7 +143,6 @@ class TestPostgres(unittest.TestCase):
     def setUp(self):
         # grab these from env vars
         self.connection = get_db_connection()
-        self.cursor = self.connection.cursor()
         self.raw_highlight = '''The Compound Effect (Darren Hardy)
 - Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
 
@@ -167,17 +166,16 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one'''
         kind = get_clipping_type(metadata)
         self.note = Clipping(title, content, dt, kind, location)
 
-        create_highlight_table(self.cursor)
-        create_note_table(self.cursor)
+        create_highlight_table(self.connection)
+        create_note_table(self.connection)
         self.connection.commit()
 
     def test_add_highlight_to_db(self):
-        add_highlight_to_db(self.highlight, self.cursor)
-        add_note_to_db(self.note, self.cursor)
-        delete_highlight_from_db(self.highlight, self.cursor)
-        delete_note_from_db(self.note, self.cursor)
+        add_highlight_to_db(self.highlight, self.connection)
+        add_note_to_db(self.note, self.connection)
+        delete_highlight_from_db(self.highlight, self.connection)
+        delete_note_from_db(self.note, self.connection)
 
 
     def tearDown(self):
-        self.connection.commit()
         self.connection.close()
