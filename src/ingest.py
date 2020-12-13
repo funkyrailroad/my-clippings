@@ -1,5 +1,4 @@
 import datetime
-
 '''
 Types of clippings:
     - Note
@@ -80,17 +79,19 @@ def process_clipping(clipping):
         TODO: Determine if clipping is a note or highlight
     '''
 
-    clipping =  clipping.split('\n')
+    clipping = clipping.split('\n')
     title = clipping.pop(0)
     metadata = clipping.pop(0)
     assert clipping.pop(0) == '', 'Unexpected Clipping Format'
     return title, metadata, '\n'.join(clipping)
+
 
 def process_metadata(metadata):
     # get location
     # get type
     # get date
     pass
+
 
 def get_clipping_type(metadata):
     '''Determine if type is highlight or note'''
@@ -99,6 +100,7 @@ def get_clipping_type(metadata):
     _, _, type, _, _ = type_loc.split()
     return type.lower()
 
+
 def get_clipping_location(metadata):
     '''Might need to differentiate between location and location range'''
 
@@ -106,12 +108,14 @@ def get_clipping_location(metadata):
     _, _, _, _, loc = type_loc.split()
     return loc
 
+
 def get_date(metadata):
     '''Parse date from metadata'''
 
     temp = metadata.split('|')[1]
     date = ' '.join(temp.split()[2:])
     return date
+
 
 def convert_parsed_date_to_datetime(date):
     _, month_name, day, year, time, semi = date.replace(',', '').split()
@@ -123,6 +127,7 @@ def convert_parsed_date_to_datetime(date):
     dt = [int(x) for x in dt]
     return datetime.datetime(*dt)
 
+
 def month_name_to_number(name):
     '''Convert month name to month number
     https://www.kite.com/python/answers/how-to-convert-between-month-name-and-month-number-in-python
@@ -130,7 +135,8 @@ def month_name_to_number(name):
 
     return datetime.datetime.strptime(name, "%B").month
 
-def split_clippings(clippings, sep = '==========\n'):
+
+def split_clippings(clippings, sep='==========\n'):
     '''Chunk full clippings text into a list of individual files
     TODO: might need to consider that text may not fit in memory at once
     (although that would be a ridiculously huge clippings file)'''
@@ -139,6 +145,7 @@ def split_clippings(clippings, sep = '==========\n'):
     clippings_list = [c[:-1] for c in clippings_list]
     # final item in split will be empty
     return clippings_list[:-1]
+
 
 if __name__ == "__main__":
     pass

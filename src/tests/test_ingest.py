@@ -3,9 +3,8 @@ import unittest
 
 from ingest import *
 
+
 class TestIngest(unittest.TestCase):
-
-
     def test_process_clipping(self):
         '''
         Process a highlight
@@ -71,7 +70,6 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
 - Your Highlight Location 626-626 | Added on Friday, December 11, 2020 1:42:54 PM
 
 Become very conscious of every choice you make today so you can begin to make smarter choices moving forward.'''
-
 
         clipping_2 = '''The Compound Effect (Darren Hardy)
 - Your Highlight Location 636-637 | Added on Friday, December 11, 2020 1:45:14 PM
