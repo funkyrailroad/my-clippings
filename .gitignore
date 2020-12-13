@@ -1,6 +1,7 @@
 # Custom gitignore files
 My\ Clippings.txt
 *.swp
+postgres_data
 
 
 # Byte-compiled / optimized / DLL files
