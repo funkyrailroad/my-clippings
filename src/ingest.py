@@ -1,4 +1,6 @@
 import datetime
+
+import psycopg2
 '''
 Types of clippings:
     - Note
@@ -145,6 +147,48 @@ def split_clippings(clippings, sep='==========\n'):
     clippings_list = [c[:-1] for c in clippings_list]
     # final item in split will be empty
     return clippings_list[:-1]
+
+def get_db_connection(
+        db: str='myclippings',
+        usr: str="postgres",
+        pw: str="mypassword",
+        host: str='127.0.0.1',
+        port='5432'
+        ):
+    connection = psycopg2.connect(database=db, user=usr, password=pw,
+            host=host, port=port)
+    return connection
+
+def create_highlight_table(cursor):
+    '''Create postgres table for highlights.
+    Unique entries have a unique set of title, location and time
+    '''
+    query = \
+    '''CREATE TABLE IF NOT EXISTS highlights (
+    id SERIAL,
+    title VARCHAR ( 500 ),
+    start_loc INTEGER,
+    end_loc INTEGER,
+    datetime TIMESTAMP,
+    content TEXT,
+    PRIMARY KEY (title, start_loc, end_loc, datetime)
+    );'''
+    cursor.execute(query)
+
+def create_note_table(cursor):
+    '''Create postgres table for notes.
+    Unique entries have a unique set of title, location and time
+    '''
+    query = \
+    '''CREATE TABLE IF NOT EXISTS notes (
+    id SERIAL,
+    title VARCHAR ( 500 ),
+    end_loc INTEGER,
+    datetime TIMESTAMP,
+    content TEXT,
+    PRIMARY KEY (title, end_loc, datetime)
+    );'''
+    cursor.execute(query)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
 import datetime
 import unittest
 
+import psycopg2
+
 from ingest import *
 
 
@@ -112,3 +114,19 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
         assert clipping.dt == datetime.datetime(2020, 12, 11, 13, 49, 33)
         assert clipping.kind == 'highlight'
         assert clipping.location == '666-668'
+
+class TestPostgres(unittest.TestCase):
+    def setUp(self):
+        # grab these from env vars
+        self.connection = get_db_connection()
+        self.cursor = self.connection.cursor()
+
+    def test_create_highlight_table(self):
+        create_highlight_table(self.cursor)
+
+    def test_create_note_table(self):
+        create_note_table(self.cursor)
+
+    def tearDown(self):
+        self.connection.commit()
+        self.connection.close()
