@@ -1,8 +1,6 @@
 import datetime
 import unittest
 
-import psycopg2
-
 from ingest import *
 
 
@@ -176,6 +174,8 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one'''
     def test_add_highlight_to_db(self):
         add_highlight_to_db(self.highlight, self.cursor)
         add_note_to_db(self.note, self.cursor)
+        delete_highlight_from_db(self.highlight, self.cursor)
+        delete_note_from_db(self.note, self.cursor)
 
 
     def tearDown(self):

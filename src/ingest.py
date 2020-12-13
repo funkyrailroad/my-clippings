@@ -233,6 +233,37 @@ def add_note_to_db(clipping, cursor):
     '''
     cursor.execute(query)
 
+def delete_highlight_from_db(clipping, cursor):
+    '''Delete highlight from database'''
+
+    assert clipping.kind == 'highlight', f'Clipping is {clipping.kind}'
+    title = clipping.title
+    location = clipping.location
+    dt = clipping.dt
+    content = clipping.content
+    query = f'''DELETE FROM highlights
+    WHERE
+    location = '{location}' AND
+    datetime = '{dt}' AND
+    content = '{content}';
+    '''
+    cursor.execute(query)
+
+def delete_note_from_db(clipping, cursor):
+    '''Delete note from database'''
+
+    assert clipping.kind == 'note', f'Clipping is {clipping.kind}'
+    title = clipping.title
+    location = clipping.location
+    dt = clipping.dt
+    content = clipping.content
+    query = f'''DELETE FROM notes
+    WHERE
+    location = '{location}' AND
+    datetime = '{dt}' AND
+    content = '{content}';
+    '''
+    cursor.execute(query)
 
 if __name__ == "__main__":
     pass
