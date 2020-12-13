@@ -157,28 +157,6 @@ class TestPostgres(unittest.TestCase):
         self.create_test_db()
         self.connection = self.get_test_db_connection()
 
-        self.raw_highlight = '''The Compound Effect (Darren Hardy)
-- Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
-
-Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'''
-        title, metadata, content = process_clipping(self.raw_highlight)
-        date = get_date(metadata)
-        dt = convert_parsed_date_to_datetime(date)
-        location = get_clipping_location(metadata)
-        kind = get_clipping_type(metadata)
-        self.highlight = Clipping(title, content, dt, kind, location)
-
-        self.raw_note = '''The Compound Effect (Darren Hardy)
-- Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
-
-amazingly thoughtful and mutually beneficial gift idea for a loved one'''
-        title, metadata, content = process_clipping(self.raw_note)
-        date = get_date(metadata)
-        dt = convert_parsed_date_to_datetime(date)
-        location = get_clipping_location(metadata)
-        kind = get_clipping_type(metadata)
-        self.note = Clipping(title, content, dt, kind, location)
-
         create_highlight_table(self.connection)
         create_note_table(self.connection)
         self.connection.commit()
@@ -215,11 +193,36 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one'''
         cursor.execute(query)
         connection.commit()
 
-    def test_add_highlight_to_db(self):
-        add_highlight_to_db(self.highlight, self.connection)
-        add_note_to_db(self.note, self.connection)
-        delete_highlight_from_db(self.highlight, self.connection)
-        delete_note_from_db(self.note, self.connection)
+    def test_highlights(self):
+        raw_highlight = '''The Compound Effect (Darren Hardy)
+- Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
+
+Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'''
+        title, metadata, content = process_clipping(raw_highlight)
+        date = get_date(metadata)
+        dt = convert_parsed_date_to_datetime(date)
+        location = get_clipping_location(metadata)
+        kind = get_clipping_type(metadata)
+        highlight = Clipping(title, content, dt, kind, location)
+
+        add_highlight_to_db(highlight, self.connection)
+        delete_highlight_from_db(highlight, self.connection)
+
+    def test_notes(self):
+        raw_note = '''The Compound Effect (Darren Hardy)
+- Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
+
+amazingly thoughtful and mutually beneficial gift idea for a loved one'''
+        title, metadata, content = process_clipping(raw_note)
+        date = get_date(metadata)
+        dt = convert_parsed_date_to_datetime(date)
+        location = get_clipping_location(metadata)
+        kind = get_clipping_type(metadata)
+        note = Clipping(title, content, dt, kind, location)
+
+        add_note_to_db(note, self.connection)
+        delete_note_from_db(note, self.connection)
+
 
     def tearDown(self):
         self.connection.close()
