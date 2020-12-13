@@ -1,6 +1,8 @@
 import datetime
 import unittest
 
+import psycopg2
+
 from ingest import *
 
 
@@ -142,7 +144,15 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one'''
 class TestPostgres(unittest.TestCase):
     def setUp(self):
         # grab these from env vars
-        self.connection = get_db_connection()
+        self.db='test_myclippings'
+        self.usr = "postgres"
+        self.pw = "mypassword"
+        self.host = '127.0.0.1'
+        self.port = '5432'
+
+        self.create_test_db()
+        self.connection = self.get_test_db_connection()
+
         self.raw_highlight = '''The Compound Effect (Darren Hardy)
 - Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
 
@@ -170,12 +180,44 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one'''
         create_note_table(self.connection)
         self.connection.commit()
 
+    def get_test_db_connection(self):
+        connection = psycopg2.connect(database=self.db,
+                                      user=self.usr,
+                                      password=self.pw,
+                                      host=self.host,
+                                      port=self.port)
+        return connection
+
+    def create_test_db(self):
+        connection = psycopg2.connect(user=self.usr,
+                                      password=self.pw,
+                                      host=self.host,
+                                      port=self.port)
+        connection.set_isolation_level(
+            psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cursor = connection.cursor()
+        query = '''CREATE DATABASE "test_myclippings";'''
+        cursor.execute(query)
+        connection.commit()
+
+    def destroy_test_db(self):
+        connection = psycopg2.connect(user=self.usr,
+                                      password=self.pw,
+                                      host=self.host,
+                                      port=self.port)
+        connection.set_isolation_level(
+            psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cursor = connection.cursor()
+        query = '''DROP DATABASE "test_myclippings";'''
+        cursor.execute(query)
+        connection.commit()
+
     def test_add_highlight_to_db(self):
         add_highlight_to_db(self.highlight, self.connection)
         add_note_to_db(self.note, self.connection)
         delete_highlight_from_db(self.highlight, self.connection)
         delete_note_from_db(self.note, self.connection)
 
-
     def tearDown(self):
         self.connection.close()
+        self.destroy_test_db()
