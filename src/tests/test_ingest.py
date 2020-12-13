@@ -88,3 +88,29 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
         clipping_list = split_clippings(clippings)
 
         assert clipping_list == answer, clipping_list
+
+
+class TestClipping(unittest.TestCase):
+    def setUp(self):
+        self.raw_clipping = '''The Compound Effect (Darren Hardy)
+- Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
+
+Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'''
+
+    def test_init(self):
+        '''Test with no note, only highlight'''
+
+        raw_clipping = self.raw_clipping
+        title, metadata, content = process_clipping(raw_clipping)
+        date = get_date(metadata)
+        dt = convert_parsed_date_to_datetime(date)
+        location = get_clipping_location(metadata)
+        kind = get_clipping_type(metadata)
+
+        clipping = Clipping(title, content, dt, kind, location)
+
+        assert clipping.title == 'The Compound Effect (Darren Hardy)'
+        assert clipping.content == 'Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight.'
+        assert clipping.dt == datetime.datetime(2020, 12, 11, 13, 49, 33)
+        assert clipping.kind == 'highlight'
+        assert clipping.location == '666-668'

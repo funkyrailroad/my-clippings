@@ -52,6 +52,25 @@ Clippings
 
 '''
 
+
+class Clipping(object):
+    def __init__(
+        self,
+        title: str,
+        content: str,
+        dt: datetime.datetime,
+        kind: str,
+        location: str,
+    ):
+        '''Data structure for the different parts of a clipping
+        '''
+        self.title = title
+        self.content = content
+        self.dt = dt
+        self.kind = kind
+        self.location = location
+
+
 def process_clippings():
     pass
 
