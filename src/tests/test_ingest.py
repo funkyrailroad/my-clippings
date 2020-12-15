@@ -243,3 +243,51 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one"""
     def tearDown(self):
         self.connection.close()
         self.destroy_test_db()
+
+
+class TestNote(unittest.TestCase):
+    def setUp(self):
+        self.raw_note = """The Compound Effect (Darren Hardy)
+- Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
+
+amazingly thoughtful and mutually beneficial gift idea for a loved one"""
+        title, metadata, content = process_clipping(self.raw_note)
+        date = get_date(metadata)
+        dt = convert_parsed_date_to_datetime(date)
+        location = get_clipping_location(metadata)
+        self.note = Note(title, content, dt, location)
+
+    def test_location(self):
+        start_loc = self.note.get_start_loc()
+        assert start_loc == None, start_loc
+
+        end_loc = self.note.get_end_loc()
+        assert end_loc == 548, end_loc
+
+    def test_db_calls(self):
+        self.note.write_to_db()
+        self.note.delete_from_db()
+
+
+class TestHighlight(unittest.TestCase):
+    def setUp(self):
+        self.raw_highlight = """The Compound Effect (Darren Hardy)
+- Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
+
+Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight."""
+        title, metadata, content = process_clipping(self.raw_highlight)
+        date = get_date(metadata)
+        dt = convert_parsed_date_to_datetime(date)
+        location = get_clipping_location(metadata)
+        self.highlight = Highlight(title, content, dt, location)
+
+    def test_location(self):
+        start_loc = self.highlight.get_start_loc()
+        assert start_loc == 666, start_loc
+
+        end_loc = self.highlight.get_end_loc()
+        assert end_loc == 668, end_loc
+
+    def test_db_calls(self):
+        self.highlight.write_to_db()
+        self.highlight.delete_from_db()

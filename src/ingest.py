@@ -121,6 +121,67 @@ class Clipping(PostgresImporter):
             delete_highlight_from_db(self, self.connection)
 
 
+class Note(Clipping):
+    def __init__(
+        self,
+        title: str,
+        content: str,
+        dt: datetime.datetime,
+        location: str,
+    ):
+        self.title = title
+        self.content = content
+        self.dt = dt
+        self.location = location
+        self.start_loc = self.get_start_loc()
+        self.end_loc = self.get_end_loc()
+        self.connection = super().get_connection()
+
+    def get_start_loc(self):
+        return None
+
+    def get_end_loc(self):
+        return int(self.location)
+
+    def write_to_db(self):
+        add_note_to_db(self, self.connection)
+
+    def delete_from_db(self):
+        delete_note_from_db(self, self.connection)
+
+
+class Highlight(Clipping):
+    def __init__(
+        self,
+        title: str,
+        content: str,
+        dt: datetime.datetime,
+        location: str,
+    ):
+        """Data structure for the different parts of a clipping"""
+        self.title = title
+        self.content = content
+        self.dt = dt
+        self.location = location
+        self.start_loc = self.get_start_loc()
+        self.end_loc = self.get_end_loc()
+        self.connection = super().get_connection()
+
+    # can be made an abstract class and defined in subclasses Note and
+    # Highlight
+    def get_start_loc(self):
+        return int(self.location.split("-")[0])
+
+    def get_end_loc(self):
+        return int(self.location.split("-")[1])
+
+    def write_to_db(self):
+        add_highlight_to_db(self, self.connection)
+
+    def delete_from_db(self):
+        delete_highlight_from_db(self, self.connection)
+
+
 def process_clippings():
     pass
 
@@ -248,7 +309,6 @@ def create_note_table(connection):
 def add_highlight_to_db(clipping, connection):
     """Add highlight to database"""
 
-    assert clipping.kind == "highlight", f"Clipping is {clipping.kind}"
     title = clipping.title
     location = clipping.location
     dt = clipping.dt
@@ -266,7 +326,6 @@ def add_highlight_to_db(clipping, connection):
 def add_note_to_db(clipping, connection):
     """Add note to database"""
 
-    assert clipping.kind == "note", f"Clipping is {clipping.kind}"
     title = clipping.title
     location = clipping.location
     dt = clipping.dt
@@ -284,7 +343,6 @@ def add_note_to_db(clipping, connection):
 def delete_highlight_from_db(clipping, connection):
     """Delete highlight from database"""
 
-    assert clipping.kind == "highlight", f"Clipping is {clipping.kind}"
     title = clipping.title
     location = clipping.location
     dt = clipping.dt
@@ -304,7 +362,6 @@ def delete_highlight_from_db(clipping, connection):
 def delete_note_from_db(clipping, connection):
     """Delete note from database"""
 
-    assert clipping.kind == "note", f"Clipping is {clipping.kind}"
     title = clipping.title
     location = clipping.location
     dt = clipping.dt
