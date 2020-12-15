@@ -149,6 +149,12 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one"""
         end_loc = self.note.get_end_loc()
         assert end_loc == 548, end_loc
 
+    def test_write_to_db(self):
+        self.highlight.write_to_db()
+        self.highlight.delete_from_db()
+        self.note.write_to_db()
+        self.note.delete_from_db()
+
 
 class TestPostgres(unittest.TestCase):
     def setUp(self):

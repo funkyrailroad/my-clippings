@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import datetime
 
 import psycopg2
@@ -55,7 +56,26 @@ Clippings
 """
 
 
-class Clipping(object):
+class PostgresImporter(ABC):
+    """Import objects into a database table"""
+
+    def get_connection(self):
+        """Get connection object to database.
+        Although this is not generic, it's bound to postgres"""
+        db = "myclippings"
+        usr = "postgres"
+        pw = "mypassword"
+        host = "127.0.0.1"
+        port = "5432"
+        return psycopg2.connect(
+            database=db, user=usr, password=pw, host=host, port=port
+        )
+
+    def write_to_db(self):
+        pass
+
+
+class Clipping(PostgresImporter):
     def __init__(
         self,
         title: str,
@@ -72,7 +92,10 @@ class Clipping(object):
         self.location = location
         self.start_loc = self.get_start_loc()
         self.end_loc = self.get_end_loc()
+        self.connection = super().get_connection()
 
+    # can be made an abstract class and defined in subclasses Note and
+    # Highlight
     def get_start_loc(self):
         if self.kind == "highlight":
             return int(self.location.split("-")[0])
@@ -84,6 +107,18 @@ class Clipping(object):
             return int(self.location.split("-")[1])
         if self.kind == "note":
             return int(self.location)
+
+    def write_to_db(self):
+        if self.kind == "note":
+            add_note_to_db(self, self.connection)
+        if self.kind == "highlight":
+            add_highlight_to_db(self, self.connection)
+
+    def delete_from_db(self):
+        if self.kind == "note":
+            delete_note_from_db(self, self.connection)
+        if self.kind == "highlight":
+            delete_highlight_from_db(self, self.connection)
 
 
 def process_clippings():
