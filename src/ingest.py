@@ -97,28 +97,16 @@ class Clipping(PostgresImporter):
     # can be made an abstract class and defined in subclasses Note and
     # Highlight
     def get_start_loc(self):
-        if self.kind == "highlight":
-            return int(self.location.split("-")[0])
-        if self.kind == "note":
-            return None
+        pass
 
     def get_end_loc(self):
-        if self.kind == "highlight":
-            return int(self.location.split("-")[1])
-        if self.kind == "note":
-            return int(self.location)
+        pass
 
     def write_to_db(self):
-        if self.kind == "note":
-            add_note_to_db(self, self.connection)
-        if self.kind == "highlight":
-            add_highlight_to_db(self, self.connection)
+        pass
 
     def delete_from_db(self):
-        if self.kind == "note":
-            delete_note_from_db(self, self.connection)
-        if self.kind == "highlight":
-            delete_highlight_from_db(self, self.connection)
+        pass
 
 
 class Note(Clipping):

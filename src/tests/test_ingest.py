@@ -135,26 +135,6 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one"""
         assert self.highlight.kind == "highlight"
         assert self.highlight.location == "666-668"
 
-    def test_get_start_loc(self):
-        start_loc = self.highlight.get_start_loc()
-        assert start_loc == 666, start_loc
-
-        start_loc = self.note.get_start_loc()
-        assert start_loc == None, start_loc
-
-    def test_get_end_loc(self):
-        end_loc = self.highlight.get_end_loc()
-        assert end_loc == 668, end_loc
-
-        end_loc = self.note.get_end_loc()
-        assert end_loc == 548, end_loc
-
-    def test_write_to_db(self):
-        self.highlight.write_to_db()
-        self.highlight.delete_from_db()
-        self.note.write_to_db()
-        self.note.delete_from_db()
-
 
 class TestPostgres(unittest.TestCase):
     def setUp(self):
