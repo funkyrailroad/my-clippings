@@ -180,10 +180,28 @@ class Note(Clipping):
         return int(self.location)
 
     def write_to_db(self):
-        add_note_to_db(self, self.connection)
+        """Add note to database"""
+
+        cursor = self.connection.cursor()
+        query = f"""INSERT INTO notes
+        (title, location, datetime, content)
+        VALUES ( '{self.title}', '{self.location}', '{self.dt}', '{self.content}' );
+        """
+        cursor.execute(query)
+        self.connection.commit()
 
     def delete_from_db(self):
-        delete_note_from_db(self, self.connection)
+        """Delete note from database"""
+
+        cursor = self.connection.cursor()
+        query = f"""DELETE FROM notes
+        WHERE
+        location = '{self.location}' AND
+        datetime = '{self.dt}' AND
+        content = '{self.content}';
+        """
+        cursor.execute(query)
+        self.connection.commit()
 
 
 class Highlight(Clipping):
@@ -212,10 +230,28 @@ class Highlight(Clipping):
         return int(self.location.split("-")[1])
 
     def write_to_db(self):
-        add_highlight_to_db(self, self.connection)
+        """Add highlight to database"""
+
+        cursor = self.connection.cursor()
+        query = f"""INSERT INTO highlights
+        (title, location, datetime, content)
+        VALUES ( '{self.title}', '{self.location}', '{self.dt}', '{self.content}' );
+        """
+        cursor.execute(query)
+        self.connection.commit()
 
     def delete_from_db(self):
-        delete_highlight_from_db(self, self.connection)
+        """Delete highlight from database"""
+
+        cursor = self.connection.cursor()
+        query = f"""DELETE FROM highlights
+        WHERE
+        location = '{self.location}' AND
+        datetime = '{self.dt}' AND
+        content = '{self.content}';
+        """
+        cursor.execute(query)
+        self.connection.commit()
 
 
 def process_clippings():
@@ -278,78 +314,6 @@ def create_note_table(connection):
     content TEXT,
     PRIMARY KEY (title, location, datetime)
     );"""
-    cursor.execute(query)
-    connection.commit()
-
-
-def add_highlight_to_db(clipping, connection):
-    """Add highlight to database"""
-
-    title = clipping.title
-    location = clipping.location
-    dt = clipping.dt
-    content = clipping.content
-
-    cursor = connection.cursor()
-    query = f"""INSERT INTO highlights
-    (title, location, datetime, content)
-    VALUES ( '{title}', '{location}', '{dt}', '{content}' );
-    """
-    cursor.execute(query)
-    connection.commit()
-
-
-def add_note_to_db(clipping, connection):
-    """Add note to database"""
-
-    title = clipping.title
-    location = clipping.location
-    dt = clipping.dt
-    content = clipping.content
-
-    cursor = connection.cursor()
-    query = f"""INSERT INTO notes
-    (title, location, datetime, content)
-    VALUES ( '{title}', '{location}', '{dt}', '{content}' );
-    """
-    cursor.execute(query)
-    connection.commit()
-
-
-def delete_highlight_from_db(clipping, connection):
-    """Delete highlight from database"""
-
-    title = clipping.title
-    location = clipping.location
-    dt = clipping.dt
-    content = clipping.content
-
-    cursor = connection.cursor()
-    query = f"""DELETE FROM highlights
-    WHERE
-    location = '{location}' AND
-    datetime = '{dt}' AND
-    content = '{content}';
-    """
-    cursor.execute(query)
-    connection.commit()
-
-
-def delete_note_from_db(clipping, connection):
-    """Delete note from database"""
-
-    title = clipping.title
-    location = clipping.location
-    dt = clipping.dt
-    content = clipping.content
-
-    cursor = connection.cursor()
-    query = f"""DELETE FROM notes
-    WHERE
-    location = '{location}' AND
-    datetime = '{dt}' AND
-    content = '{content}';
-    """
     cursor.execute(query)
     connection.commit()
 
