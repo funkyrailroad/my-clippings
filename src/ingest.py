@@ -77,6 +77,9 @@ class PostgresImporter(ABC):
     def write_to_db(self):
         pass
 
+    def delete_from_db(self):
+        pass
+
 
 class Clipping(PostgresImporter):
     def __init__(
