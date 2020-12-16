@@ -71,6 +71,9 @@ class PostgresImporter(ABC):
             database=db, user=usr, password=pw, host=host, port=port
         )
 
+    def create_table(self):
+        pass
+
     def write_to_db(self):
         pass
 
@@ -94,6 +97,9 @@ class Clipping(PostgresImporter):
         pass
 
     def get_end_loc(self):
+        pass
+
+    def create_table(self):
         pass
 
     def write_to_db(self):
@@ -179,6 +185,24 @@ class Note(Clipping):
     def get_end_loc(self):
         return int(self.location)
 
+    @staticmethod
+    def create_table(connection):
+        """Create postgres table for notes.
+        Unique entries have a unique set of title, location and time
+        """
+
+        cursor = connection.cursor()
+        query = """CREATE TABLE IF NOT EXISTS notes (
+        id SERIAL,
+        title VARCHAR ( 500 ),
+        location VARCHAR( 20 ),
+        datetime TIMESTAMPTZ,
+        content TEXT,
+        PRIMARY KEY (title, location, datetime)
+        );"""
+        cursor.execute(query)
+        connection.commit()
+
     def write_to_db(self):
         """Add note to database"""
 
@@ -228,6 +252,24 @@ class Highlight(Clipping):
 
     def get_end_loc(self):
         return int(self.location.split("-")[1])
+
+    @staticmethod
+    def create_table(connection):
+        """Create postgres table for highlights.
+        Unique entries have a unique set of title, location and time
+        """
+
+        cursor = connection.cursor()
+        query = """CREATE TABLE IF NOT EXISTS highlights (
+        id SERIAL,
+        title VARCHAR ( 500 ),
+        location VARCHAR( 20 ),
+        datetime TIMESTAMPTZ,
+        content TEXT,
+        PRIMARY KEY (title, location, datetime)
+        );"""
+        cursor.execute(query)
+        connection.commit()
 
     def write_to_db(self):
         """Add highlight to database"""
@@ -280,42 +322,6 @@ def get_db_connection(
         database=db, user=usr, password=pw, host=host, port=port
     )
     return connection
-
-
-def create_highlight_table(connection):
-    """Create postgres table for highlights.
-    Unique entries have a unique set of title, location and time
-    """
-
-    cursor = connection.cursor()
-    query = """CREATE TABLE IF NOT EXISTS highlights (
-    id SERIAL,
-    title VARCHAR ( 500 ),
-    location VARCHAR( 20 ),
-    datetime TIMESTAMPTZ,
-    content TEXT,
-    PRIMARY KEY (title, location, datetime)
-    );"""
-    cursor.execute(query)
-    connection.commit()
-
-
-def create_note_table(connection):
-    """Create postgres table for notes.
-    Unique entries have a unique set of title, location and time
-    """
-
-    cursor = connection.cursor()
-    query = """CREATE TABLE IF NOT EXISTS notes (
-    id SERIAL,
-    title VARCHAR ( 500 ),
-    location VARCHAR( 20 ),
-    datetime TIMESTAMPTZ,
-    content TEXT,
-    PRIMARY KEY (title, location, datetime)
-    );"""
-    cursor.execute(query)
-    connection.commit()
 
 
 if __name__ == "__main__":

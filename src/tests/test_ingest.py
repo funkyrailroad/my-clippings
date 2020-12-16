@@ -132,8 +132,25 @@ class TestPostgres(unittest.TestCase):
         self.create_test_db()
         self.connection = self.get_test_db_connection()
 
-        create_highlight_table(self.connection)
-        create_note_table(self.connection)
+        self.raw_highlight = """The Compound Effect (Darren Hardy)
+- Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
+
+Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight."""
+        self.raw_note = """The Compound Effect (Darren Hardy)
+- Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
+
+amazingly thoughtful and mutually beneficial gift idea for a loved one"""
+
+        c = Clipping(self.raw_highlight)
+        self.highlight = Highlight(c.title, c.content, c.dt, c.location)
+
+        c = Clipping(self.raw_note)
+        self.note = Note(c.title, c.content, c.dt, c.location)
+
+        self.highlight.create_table(self.connection)
+        self.note.create_table(self.connection)
+
+        # Note.create_table(self.connection)
 
     def get_test_db_connection(self):
         """Use this connection for everything except creating databases"""
@@ -171,6 +188,9 @@ class TestPostgres(unittest.TestCase):
         query = """DROP DATABASE "test_myclippings";"""
         cursor.execute(query)
         connection.commit()
+
+    def test_init(self):
+        pass
 
     def tearDown(self):
         self.connection.close()
