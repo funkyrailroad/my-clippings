@@ -75,6 +75,13 @@ class PostgresImporter(ABC):
         pass
 
     def write_to_db(self):
+        '''
+        Pass arguments to sql statements like so:
+        conn.execute("""SELECT pet_name
+                       FROM pet
+                       WHERE name = %s""", (name,))
+        https://stackoverflow.com/a/42547594
+        '''
         pass
 
     def delete_from_db(self):
@@ -218,24 +225,24 @@ class Note(Clipping):
         """Add note to database"""
 
         cursor = self.connection.cursor()
-        query = f"""INSERT INTO notes
+        query = """INSERT INTO notes
         (title, location, datetime, content)
-        VALUES ( '{self.title}', '{self.location}', '{self.dt}', '{self.content}' );
+        VALUES (%s, %s, %s, %s);
         """
-        cursor.execute(query)
+        cursor.execute(query, (self.title, self.location, self.dt, self.content))
         self.connection.commit()
 
     def delete_from_db(self):
         """Delete note from database"""
 
         cursor = self.connection.cursor()
-        query = f"""DELETE FROM notes
+        query = """DELETE FROM notes
         WHERE
-        location = '{self.location}' AND
-        datetime = '{self.dt}' AND
-        content = '{self.content}';
+        location = %s AND
+        datetime = %s AND
+        content = %s;
         """
-        cursor.execute(query)
+        cursor.execute(query, (self.location, self.dt, self.content))
         self.connection.commit()
 
 
@@ -286,24 +293,24 @@ class Highlight(Clipping):
         """Add highlight to database"""
 
         cursor = self.connection.cursor()
-        query = f"""INSERT INTO highlights
+        query = """INSERT INTO highlights
         (title, location, datetime, content)
-        VALUES ( '{self.title}', '{self.location}', '{self.dt}', '{self.content}' );
+        VALUES (%s, %s, %s, %s);
         """
-        cursor.execute(query)
+        cursor.execute(query, (self.title, self.location, self.dt, self.content))
         self.connection.commit()
 
     def delete_from_db(self):
         """Delete highlight from database"""
 
         cursor = self.connection.cursor()
-        query = f"""DELETE FROM highlights
+        query = """DELETE FROM highlights
         WHERE
-        location = '{self.location}' AND
-        datetime = '{self.dt}' AND
-        content = '{self.content}';
+        location = %s AND
+        datetime = %s AND
+        content = %s;
         """
-        cursor.execute(query)
+        cursor.execute(query, (self.location, self.dt, self.content))
         self.connection.commit()
 
 
