@@ -129,15 +129,23 @@ class Clipping(PostgresImporter):
     def get_clipping_type(self, metadata):
         """Determine if type is highlight or note"""
 
-        type_loc = metadata.split("|")[0]
-        _, _, type, _, _ = type_loc.split()
+        temp = metadata.split("|")[0].split()
+        if len(temp) == 5:
+            _, _, type, _, _ = temp
+        if len(temp) == 6:
+            _, _, type, _, _, _ = temp
         return type.lower()
 
     def get_clipping_location(self, metadata):
         """Might need to differentiate between location and location range"""
 
-        type_loc = metadata.split("|")[0]
-        _, _, _, _, loc = type_loc.split()
+        temp = metadata.split("|")[0].split()
+        if len(temp) == 5:
+            _, _, _, _, loc = temp
+        elif len(temp) == 6:
+            _, _, _, _, _, loc = temp
+        else:
+            raise NotImplementedError
         return loc
 
     def get_date(self, metadata):
