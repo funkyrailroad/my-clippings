@@ -166,10 +166,14 @@ class Clipping(PostgresImporter):
         _, month_name, day, year, time, semi = date.replace(",", "").split()
         month = month_name_to_number(month_name)
         hr, min, sec = time.split(":")
-        if semi == "PM":
-            hr = int(hr) + 12
+        hr = int(hr)
+        if (semi == "PM") and (hr != 12):
+            hr = hr + 12
+        elif (semi == "AM") and (hr == 12):
+            hr = 0
         dt = [year, month, day, hr, min, sec]
         dt = [int(x) for x in dt]
+
         return datetime.datetime(*dt).replace(tzinfo=datetime.timezone.utc)
 
 

@@ -82,6 +82,18 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
             2020, 4, 18, 23, 21, 19, tzinfo=datetime.timezone.utc
         )
 
+        date = "Saturday, April 18, 2020 12:21:19 PM"
+        dt = self.clipping.convert_parsed_date_to_datetime(date)
+        assert dt == datetime.datetime(
+            2020, 4, 18, 12, 21, 19, tzinfo=datetime.timezone.utc
+        )
+
+        date = "Saturday, April 18, 2020 12:21:19 AM"
+        dt = self.clipping.convert_parsed_date_to_datetime(date)
+        assert dt == datetime.datetime(
+            2020, 4, 18, 0, 21, 19, tzinfo=datetime.timezone.utc
+        )
+
     def test_process_clipping(self):
         """
         Process a highlight
