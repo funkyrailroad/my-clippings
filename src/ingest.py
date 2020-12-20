@@ -225,10 +225,10 @@ class Note(Clipping):
         cursor.execute(query)
         connection.commit()
 
-    def write_to_db(self):
+    def write_to_db(self, connection):
         """Add note to database"""
 
-        cursor = self.connection.cursor()
+        cursor = connection.cursor()
         query = """INSERT INTO notes
         (title, location, datetime, content)
         VALUES (%s, %s, %s, %s);
@@ -236,10 +236,10 @@ class Note(Clipping):
         cursor.execute(query, (self.title, self.location, self.dt, self.content))
         self.connection.commit()
 
-    def delete_from_db(self):
+    def delete_from_db(self, connection):
         """Delete note from database"""
 
-        cursor = self.connection.cursor()
+        cursor = connection.cursor()
         query = """DELETE FROM notes
         WHERE
         location = %s AND
@@ -293,10 +293,10 @@ class Highlight(Clipping):
         cursor.execute(query)
         connection.commit()
 
-    def write_to_db(self):
+    def write_to_db(self, connection):
         """Add highlight to database"""
 
-        cursor = self.connection.cursor()
+        cursor = connection.cursor()
         query = """INSERT INTO highlights
         (title, location, datetime, content)
         VALUES (%s, %s, %s, %s);
@@ -304,10 +304,10 @@ class Highlight(Clipping):
         cursor.execute(query, (self.title, self.location, self.dt, self.content))
         self.connection.commit()
 
-    def delete_from_db(self):
+    def delete_from_db(self, connection):
         """Delete highlight from database"""
 
-        cursor = self.connection.cursor()
+        cursor = connection.cursor()
         query = """DELETE FROM highlights
         WHERE
         location = %s AND
