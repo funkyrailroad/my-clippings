@@ -3,6 +3,8 @@ import datetime
 
 import psycopg2
 
+import tqdm
+
 """
 Types of clippings:
     - Note
@@ -384,6 +386,21 @@ def get_db_connection(
         database=db, user=usr, password=pw, host=host, port=port
     )
     return connection
+
+
+def import_clippings(
+    fn="../My Clippings-newest.txt",
+    connection=PostgresImporter().get_connection(),
+):
+    with open(fn) as f:
+        all_raw_clippings = "".join(f.readlines())
+        raw_clippings = split_clippings(all_raw_clippings)
+        for ind, rc in enumerate(tqdm.tqdm(raw_clippings)):
+            c = Clipping(rc)
+            if c.kind == "note":
+                Note(c.title, c.content, c.dt, c.location).write_to_db(connection)
+            if c.kind == "highlight":
+                Highlight(c.title, c.content, c.dt, c.location).write_to_db(connection)
 
 
 if __name__ == "__main__":

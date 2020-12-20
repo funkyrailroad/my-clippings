@@ -264,8 +264,8 @@ class TestBatchProcess(unittest.TestCase):
         Highlight.create_table(self.connection)
         Note.create_table(self.connection)
 
-    # def test_import_clippings(self):
-    #     import_clippings(connection=self.connection)
+    def test_import_clippings(self):
+        import_clippings(connection=self.connection)
 
     def tearDown(self):
         self.connection.close()
