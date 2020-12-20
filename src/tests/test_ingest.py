@@ -141,8 +141,11 @@ class TestPostgres(unittest.TestCase):
         self.host = "127.0.0.1"
         self.port = "5432"
 
-        self.create_test_db()
-        self.connection = self.get_test_db_connection()
+        self.pg_importer = PostgresImporter(
+            self.db, self.usr, self.pw, self.host, self.port
+        )
+
+        self.connection = self.pg_importer.get_connection()
 
         self.raw_highlight = """The Compound Effect (Darren Hardy)
 - Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
@@ -164,49 +167,12 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one"""
 
         # Note.create_table(self.connection)
 
-    def get_test_db_connection(self):
-        """Use this connection for everything except creating databases"""
-
-        connection = psycopg2.connect(
-            database=self.db,
-            user=self.usr,
-            password=self.pw,
-            host=self.host,
-            port=self.port,
-        )
-        return connection
-
-    def create_test_db(self):
-        """Create the test database
-        https://pythontic.com/database/postgresql/create%20database"""
-
-        connection = psycopg2.connect(
-            user=self.usr, password=self.pw, host=self.host, port=self.port
-        )
-        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = connection.cursor()
-        query = """CREATE DATABASE "test_myclippings";"""
-        cursor.execute(query)
-        connection.commit()
-
-    def destroy_test_db(self):
-        """Destroy the test database"""
-
-        connection = psycopg2.connect(
-            user=self.usr, password=self.pw, host=self.host, port=self.port
-        )
-        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = connection.cursor()
-        query = """DROP DATABASE "test_myclippings";"""
-        cursor.execute(query)
-        connection.commit()
-
     def test_init(self):
         pass
 
     def tearDown(self):
         self.connection.close()
-        self.destroy_test_db()
+        self.pg_importer.destroy_db()
 
 
 class TestNote(unittest.TestCase):
@@ -223,40 +189,12 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one"""
         self.pw = "mypassword"
         self.host = "127.0.0.1"
         self.port = "5432"
-        self.create_test_db()
-        self.connection = psycopg2.connect(
-            database=self.db,
-            user=self.usr,
-            password=self.pw,
-            host=self.host,
-            port=self.port,
+        self.pg_importer = PostgresImporter(
+            self.db, self.usr, self.pw, self.host, self.port
         )
+
+        self.connection = self.pg_importer.get_connection()
         self.note.create_table(self.connection)
-
-    def create_test_db(self):
-        """Create the test database
-        https://pythontic.com/database/postgresql/create%20database"""
-
-        connection = psycopg2.connect(
-            user=self.usr, password=self.pw, host=self.host, port=self.port
-        )
-        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = connection.cursor()
-        query = """CREATE DATABASE "test_myclippings";"""
-        cursor.execute(query)
-        connection.commit()
-
-    def destroy_test_db(self):
-        """Destroy the test database"""
-
-        connection = psycopg2.connect(
-            user=self.usr, password=self.pw, host=self.host, port=self.port
-        )
-        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = connection.cursor()
-        query = """DROP DATABASE "test_myclippings";"""
-        cursor.execute(query)
-        connection.commit()
 
     def test_location(self):
         start_loc = self.note.get_start_loc()
@@ -271,7 +209,7 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one"""
 
     def tearDown(self):
         self.connection.close()
-        self.destroy_test_db()
+        self.pg_importer.destroy_db()
 
 
 class TestHighlight(unittest.TestCase):
@@ -288,40 +226,12 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
         self.pw = "mypassword"
         self.host = "127.0.0.1"
         self.port = "5432"
-        self.create_test_db()
-        self.connection = psycopg2.connect(
-            database=self.db,
-            user=self.usr,
-            password=self.pw,
-            host=self.host,
-            port=self.port,
+        self.pg_importer = PostgresImporter(
+            self.db, self.usr, self.pw, self.host, self.port
         )
+
+        self.connection = self.pg_importer.get_connection()
         self.highlight.create_table(self.connection)
-
-    def create_test_db(self):
-        """Create the test database
-        https://pythontic.com/database/postgresql/create%20database"""
-
-        connection = psycopg2.connect(
-            user=self.usr, password=self.pw, host=self.host, port=self.port
-        )
-        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = connection.cursor()
-        query = """CREATE DATABASE "test_myclippings";"""
-        cursor.execute(query)
-        connection.commit()
-
-    def destroy_test_db(self):
-        """Destroy the test database"""
-
-        connection = psycopg2.connect(
-            user=self.usr, password=self.pw, host=self.host, port=self.port
-        )
-        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = connection.cursor()
-        query = """DROP DATABASE "test_myclippings";"""
-        cursor.execute(query)
-        connection.commit()
 
     def test_location(self):
         start_loc = self.highlight.get_start_loc()
@@ -336,7 +246,7 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
 
     def tearDown(self):
         self.connection.close()
-        self.destroy_test_db()
+        self.pg_importer.destroy_db()
 
 
 class TestBatchProcess(unittest.TestCase):
@@ -346,45 +256,17 @@ class TestBatchProcess(unittest.TestCase):
         self.pw = "mypassword"
         self.host = "127.0.0.1"
         self.port = "5432"
-        self.create_test_db()
-        self.connection = psycopg2.connect(
-            database=self.db,
-            user=self.usr,
-            password=self.pw,
-            host=self.host,
-            port=self.port,
+        self.pg_importer = PostgresImporter(
+            self.db, self.usr, self.pw, self.host, self.port
         )
+
+        self.connection = self.pg_importer.get_connection()
         Highlight.create_table(self.connection)
         Note.create_table(self.connection)
 
-    def create_test_db(self):
-        """Create the test database
-        https://pythontic.com/database/postgresql/create%20database"""
-
-        connection = psycopg2.connect(
-            user=self.usr, password=self.pw, host=self.host, port=self.port
-        )
-        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = connection.cursor()
-        query = """CREATE DATABASE "test_myclippings";"""
-        cursor.execute(query)
-        connection.commit()
-
-    def destroy_test_db(self):
-        """Destroy the test database"""
-
-        connection = psycopg2.connect(
-            user=self.usr, password=self.pw, host=self.host, port=self.port
-        )
-        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = connection.cursor()
-        query = """DROP DATABASE "test_myclippings";"""
-        cursor.execute(query)
-        connection.commit()
-
-    def test_import_clippings(self):
-        import_clippings(connection=self.connection)
+    # def test_import_clippings(self):
+    #     import_clippings(connection=self.connection)
 
     def tearDown(self):
         self.connection.close()
-        self.destroy_test_db()
+        self.pg_importer.destroy_db()

@@ -59,17 +59,57 @@ Clippings
 class PostgresImporter(ABC):
     """Import objects into a database table"""
 
+    def __init__(
+        self,
+        db="myclippings",
+        usr="postgres",
+        pw="mypassword",
+        host="127.0.0.1",
+        port="5432",
+    ):
+        self.db = db
+        self.usr = usr
+        self.pw = pw
+        self.host = host
+        self.port = port
+        self.create_db()
+
     def get_connection(self):
         """Get connection object to database.
         Although this is not generic, it's bound to postgres"""
-        db = "myclippings"
-        usr = "postgres"
-        pw = "mypassword"
-        host = "127.0.0.1"
-        port = "5432"
         return psycopg2.connect(
-            database=db, user=usr, password=pw, host=host, port=port
+            database=self.db,
+            user=self.usr,
+            password=self.pw,
+            host=self.host,
+            port=self.port,
         )
+
+    def get_sudo_connection(self):
+        connection = psycopg2.connect(
+            user=self.usr, password=self.pw, host=self.host, port=self.port
+        )
+        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        return connection
+
+    def create_db(self):
+        """Create the database
+        https://pythontic.com/database/postgresql/create%20database"""
+
+        connection = self.get_sudo_connection()
+        cursor = connection.cursor()
+        query = f"""CREATE DATABASE {self.db};"""
+        cursor.execute(query)
+        connection.commit()
+
+    def destroy_db(self):
+
+        connection = self.get_sudo_connection()
+        connection.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cursor = connection.cursor()
+        query = f"""DROP DATABASE {self.db};"""
+        cursor.execute(query)
+        connection.commit()
 
     def create_table(self):
         pass
