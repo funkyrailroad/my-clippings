@@ -212,7 +212,7 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one"""
 class TestNote(unittest.TestCase):
     def setUp(self):
         self.raw_note = """The Compound Effect (Darren Hardy)
-- Your Note Location 548 | Added on Friday, December 11, 2020 1:24:32 PM
+- Your Note Location 548 | Added on Friday, December 11, 2020 1:24:33 PM
 
 amazingly thoughtful and mutually beneficial gift idea for a loved one"""
         c = Clipping(self.raw_note)
@@ -233,7 +233,7 @@ amazingly thoughtful and mutually beneficial gift idea for a loved one"""
 class TestHighlight(unittest.TestCase):
     def setUp(self):
         self.raw_highlight = """The Compound Effect (Darren Hardy)
-- Your Highlight Location 666-668 | Added on Friday, December 11, 2020 1:49:33 PM
+- Your Highlight Location 667-668 | Added on Friday, December 11, 2020 1:49:33 PM
 
 Do you know how the casinos make so much money in Vegas? Because they track every table, every winner, every hour. Why do Olympic trainers get paid top dollar? Because they track every workout, every calorie, and every micronutrient for their athletes. All winners are trackers. Right now I want you to track your life with the same intention: to bring your goals within sight."""
         c = Clipping(self.raw_highlight)
@@ -241,7 +241,7 @@ Do you know how the casinos make so much money in Vegas? Because they track ever
 
     def test_location(self):
         start_loc = self.highlight.get_start_loc()
-        assert start_loc == 666, start_loc
+        assert start_loc == 667, start_loc
 
         end_loc = self.highlight.get_end_loc()
         assert end_loc == 668, end_loc
