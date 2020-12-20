@@ -96,11 +96,14 @@ class PostgresImporter(ABC):
         """Create the database
         https://pythontic.com/database/postgresql/create%20database"""
 
-        connection = self.get_sudo_connection()
-        cursor = connection.cursor()
-        query = f"""CREATE DATABASE {self.db};"""
-        cursor.execute(query)
-        connection.commit()
+        try:
+            connection = self.get_sudo_connection()
+            cursor = connection.cursor()
+            query = f"""CREATE DATABASE {self.db};"""
+            cursor.execute(query)
+            connection.commit()
+        except psycopg2.errors.DuplicateDatabase:
+            pass
 
     def destroy_db(self):
 
