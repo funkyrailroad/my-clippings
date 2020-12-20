@@ -99,7 +99,6 @@ class Clipping(PostgresImporter):
         self.location = self.get_clipping_location(self.metadata)
         self.date = self.get_date(self.metadata)
         self.dt = self.convert_parsed_date_to_datetime(self.date)
-        self.connection = super().get_connection()
 
     # can be made an abstract class and defined in subclasses Note and
     # Highlight
@@ -199,7 +198,6 @@ class Note(Clipping):
         self.location = location
         self.start_loc = self.get_start_loc()
         self.end_loc = self.get_end_loc()
-        self.connection = super().get_connection()
 
     def get_start_loc(self):
         return None
@@ -234,7 +232,7 @@ class Note(Clipping):
         VALUES (%s, %s, %s, %s);
         """
         cursor.execute(query, (self.title, self.location, self.dt, self.content))
-        self.connection.commit()
+        connection.commit()
 
     def delete_from_db(self, connection):
         """Delete note from database"""
@@ -247,7 +245,7 @@ class Note(Clipping):
         content = %s;
         """
         cursor.execute(query, (self.location, self.dt, self.content))
-        self.connection.commit()
+        connection.commit()
 
 
 class Highlight(Clipping):
@@ -265,7 +263,6 @@ class Highlight(Clipping):
         self.location = location
         self.start_loc = self.get_start_loc()
         self.end_loc = self.get_end_loc()
-        self.connection = super().get_connection()
 
     # can be made an abstract class and defined in subclasses Note and
     # Highlight
@@ -302,7 +299,7 @@ class Highlight(Clipping):
         VALUES (%s, %s, %s, %s);
         """
         cursor.execute(query, (self.title, self.location, self.dt, self.content))
-        self.connection.commit()
+        connection.commit()
 
     def delete_from_db(self, connection):
         """Delete highlight from database"""
@@ -315,7 +312,7 @@ class Highlight(Clipping):
         content = %s;
         """
         cursor.execute(query, (self.location, self.dt, self.content))
-        self.connection.commit()
+        connection.commit()
 
 
 def process_clippings():
