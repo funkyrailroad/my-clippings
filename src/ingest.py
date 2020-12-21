@@ -327,10 +327,11 @@ class Highlight(Clipping):
         query = """CREATE TABLE IF NOT EXISTS highlights (
         id SERIAL,
         title VARCHAR ( 500 ),
-        location VARCHAR( 20 ),
+        start_loc VARCHAR( 20 ),
+        end_loc VARCHAR( 20 ),
         datetime TIMESTAMPTZ,
         content TEXT,
-        PRIMARY KEY (title, location, datetime)
+        PRIMARY KEY (title, start_loc, end_loc, datetime)
         );"""
         cursor.execute(query)
         connection.commit()
@@ -340,10 +341,12 @@ class Highlight(Clipping):
 
         cursor = connection.cursor()
         query = """INSERT INTO highlights
-        (title, location, datetime, content)
-        VALUES (%s, %s, %s, %s);
+        (title, start_loc, end_loc, datetime, content)
+        VALUES (%s, %s, %s, %s, %s);
         """
-        cursor.execute(query, (self.title, self.location, self.dt, self.content))
+        cursor.execute(
+            query, (self.title, self.start_loc, self.end_loc, self.dt, self.content)
+        )
         connection.commit()
 
     def delete_from_db(self, connection):
@@ -352,11 +355,12 @@ class Highlight(Clipping):
         cursor = connection.cursor()
         query = """DELETE FROM highlights
         WHERE
-        location = %s AND
+        start_loc = %s AND
+        end_loc = %s AND
         datetime = %s AND
         content = %s;
         """
-        cursor.execute(query, (self.location, self.dt, self.content))
+        cursor.execute(query, (self.start_loc, self.end_loc, self.dt, self.content))
         connection.commit()
 
 
