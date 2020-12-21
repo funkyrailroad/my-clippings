@@ -260,7 +260,7 @@ class Note(Clipping):
         query = """CREATE TABLE IF NOT EXISTS notes (
         id SERIAL,
         title VARCHAR ( 500 ),
-        location VARCHAR( 20 ),
+        location INTEGER,
         datetime TIMESTAMPTZ,
         content TEXT,
         PRIMARY KEY (title, location, datetime)
@@ -327,8 +327,8 @@ class Highlight(Clipping):
         query = """CREATE TABLE IF NOT EXISTS highlights (
         id SERIAL,
         title VARCHAR ( 500 ),
-        start_loc VARCHAR( 20 ),
-        end_loc VARCHAR( 20 ),
+        start_loc INTEGER,
+        end_loc INTEGER,
         datetime TIMESTAMPTZ,
         content TEXT,
         PRIMARY KEY (title, start_loc, end_loc, datetime)
