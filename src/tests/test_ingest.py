@@ -270,3 +270,25 @@ class TestBatchProcess(unittest.TestCase):
     def tearDown(self):
         self.connection.close()
         self.pg_importer.destroy_db()
+
+
+class TestViews(unittest.TestCase):
+    # ? can I use fixtures to prepopulate the database with highlights
+    # and notes??
+    def setUp(self):
+        self.db = "myclippings"
+        self.usr = "postgres"
+        self.pw = "mypassword"
+        self.host = "127.0.0.1"
+        self.port = "5432"
+        self.pg_importer = PostgresImporter(
+            self.db, self.usr, self.pw, self.host, self.port
+        )
+
+        self.connection = self.pg_importer.get_connection()
+        Highlight.create_table(self.connection)
+        Note.create_table(self.connection)
+
+    def test_get_titles(self):
+        titles = get_titles(self.connection, "highlights")
+        hls = get_highlights(self.connection, titles[0])

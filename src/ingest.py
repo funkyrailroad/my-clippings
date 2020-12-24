@@ -407,5 +407,29 @@ def import_clippings(
                 Highlight(c.title, c.content, c.dt, c.location).write_to_db(connection)
 
 
+def get_titles(connection, table):
+    cursor = connection.cursor()
+    query = f"""SELECT
+                DISTINCT title
+                FROM {table} ;
+                """
+    cursor.execute(query)
+    results = cursor.fetchall()
+    titles = [result[0] for result in results]
+    return titles
+
+
+def get_highlights(con, title):
+    query = """SELECT content, start_loc, end_loc
+                FROM highlights
+                WHERE title = %s
+                ORDER BY start_loc, end_loc"""
+    with con.cursor() as curs:
+        curs.execute(query, (title,))
+        results = curs.fetchall()
+        highlights = [r for r in results]
+    return highlights
+
+
 if __name__ == "__main__":
     pass
